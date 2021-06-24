@@ -56,9 +56,20 @@ if(isset($_POST["operation"])){
 			$km=$donnee[3];
 			$nuitee=$donnee[4];
 			$repas=$donnee[5];
+			$donneeHf=array();
 			
+			
+			if(count($donnee)>6){
+				
+				$donneeHf=array_slice($donnee,6);
+				$donneeHf=array_chunk($donneeHf,3);
+				
+				
+			}
 			
 			print("enreg%");
+
+			
 			
 			
 			$cnx=connexionPDO();
@@ -79,6 +90,14 @@ if(isset($_POST["operation"])){
 			$requete2="INSERT into lignefraisforfait(idvisiteur,mois,idfraisforfait,quantite) VALUES ('$id','$date','KM',$km)";
 			$requete3="INSERT into lignefraisforfait(idvisiteur,mois,idfraisforfait,quantite) VALUES ('$id','$date','NUI',$nuitee)";
 			$requete4="INSERT into lignefraisforfait(idvisiteur,mois,idfraisforfait,quantite) VALUES ('$id','$date','REP',$repas)";
+			
+			foreach($donneeHf as $key=>$value){
+				
+				$requeteHf="INSERT  into lignefraishorsforfait(idvisiteur,mois,libelle,date,montant) VALUES('$id','$date','$value[1]','$value[0]','$value[2]')";
+	
+				$req=$cnx->prepare($requeteHf);
+				$req->execute();
+			}
 			
 			
 			
