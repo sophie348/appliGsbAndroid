@@ -1,5 +1,6 @@
 package fr.cned.emdsgil.suividevosfrais;
 import android.content.Context;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -9,13 +10,6 @@ import fr.cned.emdsgil.suividevosfrais.AccesHTTP;
 import fr.cned.emdsgil.suividevosfrais.AsyncResponse;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Date;
-import android.widget.Toast;
-
 
 
 public class AccesDistant implements AsyncResponse{
@@ -54,6 +48,7 @@ public class AccesDistant implements AsyncResponse{
                     Toast.makeText(context, "connexion reussie", Toast.LENGTH_SHORT).show();
 
                     controle.envoi("enreg", controle.convertFraisToJSONArray());
+
                 } else {
                     if (message[1].equals("erreurlogin")) {
 
@@ -63,6 +58,8 @@ public class AccesDistant implements AsyncResponse{
             } else {
                 if (message[0].equals(("enreg"))) {
                     Log.d("enreg", "******************" + message[1]);
+
+
                 }
             }
 

@@ -21,12 +21,12 @@ public final class Controle {
     private Date date = new Date();
     private String nom;
 
-/*    Calendar cal = Calendar.getInstance();
-    int anneeEnCours = (cal.get(Calendar.YEAR));
-    int moisEnCours = (cal.get(Calendar.MONTH));*/
+
 
     /*   String dateEnCours = anneeEnCours+"0"+moisEnCours;*/
     String dateEnCours = convertDateToString(date);
+    String moisPrecedent=trouverMoisPrecedent(dateEnCours);
+
 
     /**
      * constructeur privé
@@ -70,15 +70,16 @@ public final class Controle {
         for (Map.Entry<Integer, FraisMois> fraisDetail : Global.listFraisMois.entrySet()) {
             Integer key = fraisDetail.getKey();
             FraisMois fm = fraisDetail.getValue();
-            if (key == Integer.parseInt(dateEnCours)) {
-                list.add(dateEnCours);
+            if (key == Integer.parseInt(moisPrecedent)) {
+                list.add(moisPrecedent);
                 list.add(nom);
                 list.add(fm.getEtape());
                 list.add(fm.getKm());
                 list.add(fm.getNuitee());
                 list.add(fm.getRepas());
                 for (FraisHf hf : fm.getLesFraisHf()) {
-                    list.add(hf.getJour());
+                    String daySql=convertDateToFormatSql(hf.getJour(),moisPrecedent);
+                    list.add(daySql);
                     list.add(hf.getMotif());
                     list.add(hf.getMontant());
 
@@ -87,6 +88,7 @@ public final class Controle {
         }
 
         Log.d("liste", "***************" +list);
+
         return new JSONArray(list);
     }
 
@@ -98,6 +100,43 @@ public final class Controle {
     public  String convertDateToString(Date uneDate){
         SimpleDateFormat date=new SimpleDateFormat("yyyyMM");
         return date.format(uneDate);
+    }
+
+    /**
+     * conversion de la date du frais hf au format mySql
+     * @param day
+     * @return
+     */
+    public String  convertDateToFormatSql(Integer day,String dateFormat){
+        String dayS=day.toString();
+        String Annee=dateFormat.substring(0,4);
+        String Mois=dateFormat.substring(4,6);
+
+        String dateEnregistrementHf=Annee+"-"+Mois+"-"+dayS;
+        return dateEnregistrementHf;
+    }
+
+    /**
+     * trouver le mois précédent pour enregistrer la date
+     * @param date
+     * @return
+     */
+    public String trouverMoisPrecedent(String date){
+        String annee=date.substring(0,4);
+        String mois=date.substring(4,6);
+        if(mois=="01"){
+            return annee+"12";
+        }else{
+           Integer moisI=Integer.parseInt(mois);
+           moisI=moisI-1;
+           mois=moisI.toString();
+           if(mois=="11"||mois=="10") {
+               return annee + mois;
+           }else{
+               return annee+"0"+mois;
+           }
+
+        }
     }
 
     /**
